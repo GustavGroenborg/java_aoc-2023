@@ -1,6 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.util.regex.*;
+
+import java.util.Arrays;
 
 public class Dec3Tests {
     @Test
@@ -51,6 +52,33 @@ public class Dec3Tests {
 
         // When
         int output = Dec3.part1(input);
+
+        // Then
+        assertEquals(target, output);
+    }
+
+
+    @Test
+    public void test_part2TrainingInput() {
+        // Given
+        int target = 1;
+        String string = """
+                ...1.......
+                ...*.......
+                ....1......
+                ...........
+                .....576...
+                ......*....
+                ...........
+                ......*....
+                .....495...
+                """;
+        char[][] input = Arrays.stream(string.split("\n"))
+                .map(String::toCharArray)
+                .toArray(char[][]::new);
+
+        // When
+        int output = Dec3.part2(input);
 
         // Then
         assertEquals(target, output);
