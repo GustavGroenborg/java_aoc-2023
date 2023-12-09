@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.regex.*;
 
 public class CamelHand implements Comparable<CamelHand> {
@@ -7,7 +8,8 @@ public class CamelHand implements Comparable<CamelHand> {
     Integer[] cardValues = new Integer[MAX_CARDS];
     Integer bid;
 
-    public CamelHand(String input) {
+    public CamelHand(String input, boolean part2) {
+        final int JOKER = 11;
         this.bid = getBidFrom(input);
         char[] unparsedCards = input.split("\\s")[0].toCharArray();
 
@@ -20,6 +22,29 @@ public class CamelHand implements Comparable<CamelHand> {
             this.cardValues[i] = getValueFrom(unparsedCards[i]);
             cardStacks[getValueFrom(unparsedCards[i])]++;
         }
+
+        if (part2 && cardStacks[JOKER] > 0) {
+            int[][] occurrences = Arrays.stream(cardValues)
+                    .distinct()
+                    .filter(val -> val != JOKER)
+                    .map(card -> new int[]{ card, cardStacks[card] })
+                    .sorted((arr1, arr2) -> Integer.compare(arr2[1], arr1[1]))
+                    .toArray(int[][]::new);
+
+            for (int[] occurrence : occurrences) {
+                while (cardStacks[JOKER] > 0 && occurrence[1] < 5) {
+                    occurrence[1]++;
+                    cardStacks[JOKER]--;
+                }
+                cardStacks[occurrence[0]] = occurrence[1];
+            }
+
+            // Making the joker the weakest card.
+            cardValues = Arrays.stream(cardValues)
+                    .map(val -> val == 11 ? 1 : val)
+                    .toArray(Integer[]::new);
+        }
+
 
         var currentCardType = CardType.highCard;
         for (int i = cardStacks.length - 1; i > 1; i--) {
